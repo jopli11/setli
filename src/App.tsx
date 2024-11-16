@@ -1,11 +1,11 @@
 // src/App.tsx
-import Button from './components/common/Button';
+import React from 'react';
+import HomePage from './pages/HomePage';
 
 function App() {
   return (
     <div className="App">
-      <h1>Welcome to Setli</h1>
-      <Button label="Test Button" onClick={() => alert('Button clicked!')} />
+      <HomePage />
     </div>
   );
 }

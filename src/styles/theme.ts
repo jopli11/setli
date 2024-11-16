@@ -1,3 +1,5 @@
+// styles/theme.ts
+
 const theme = {
     colors: {
       primary: '#333333',
