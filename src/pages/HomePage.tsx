@@ -1,10 +1,15 @@
 // src/pages/HomePage.tsx
 import React from 'react';
+import SearchInput from '../components/SearchInput';
 
 const HomePage: React.FC = () => {
+  const handlePlaceSelected = (place: any) => { // Updated type to `any`
+    console.log('Selected Place:', place);
+    // Handle the selected place data here (e.g., save it to state, fetch nearby services, etc.)
+  };
+
   return (
     <div className="relative min-h-screen bg-lightGrey flex flex-col items-center justify-center p-8 overflow-hidden">
-      
       {/* Background Circles */}
       <div className="absolute w-32 h-32 bg-primary rounded-full opacity-30" style={{ top: '5%', left: '10%' }}></div>
       <div className="absolute w-48 h-48 bg-highlight rounded-full opacity-30" style={{ top: '15%', left: '50%' }}></div>
@@ -22,14 +27,7 @@ const HomePage: React.FC = () => {
       <p className="text-lg text-slateBlue mb-4 text-center">
         Enter your address to find the best local services around you.
       </p>
-      <input
-        type="text"
-        placeholder="Enter your address..."
-        className="w-full max-w-md p-4 mb-4 border rounded shadow-sm"
-      />
-      <button className="bg-highlight text-white py-2 px-6 rounded hover:bg-primary transition duration-300">
-        Search Services
-      </button>
+      <SearchInput onPlaceSelected={handlePlaceSelected} />
     </div>
   );
 };
