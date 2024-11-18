@@ -1,12 +1,34 @@
 // src/pages/HomePage.tsx
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SearchInput from '../components/SearchInput';
 
 const HomePage: React.FC = () => {
-  const handlePlaceSelected = (place: any) => { // Updated type to `any`
+  const [selectedPlace, setSelectedPlace] = useState<any>(null);
+  const navigate = useNavigate();
+
+  const handlePlaceSelected = (place: any) => {
     console.log('Selected Place:', place);
-    // Handle the selected place data here (e.g., save it to state, fetch nearby services, etc.)
+    // Extract serializable properties
+    const placeData = {
+      formatted_address: place.formatted_address,
+      place_id: place.place_id,
+      geometry: {
+        location: {
+          lat: place.geometry?.location?.lat(),
+          lng: place.geometry?.location?.lng(),
+        },
+      },
+    };
+    setSelectedPlace(placeData);
   };
+
+  const handleContinue = () => {
+    if (selectedPlace) {
+      navigate('/results', { state: { place: selectedPlace } });
+    }
+  };
+
 
   return (
     <div className="relative min-h-screen bg-lightGrey flex flex-col items-center justify-center p-8 overflow-hidden">
@@ -22,12 +44,20 @@ const HomePage: React.FC = () => {
       <div className="absolute w-26 h-26 bg-teal rounded-full opacity-30" style={{ bottom: '30%', right: '10%' }}></div>
       <div className="absolute w-30 h-30 bg-tan rounded-full opacity-30" style={{ bottom: '50%', right: '35%' }}></div>
 
-      {/* Main Content */}
-      <h1 className="text-4xl font-bold text-primary mb-6">Welcome to Setli</h1>
+ {/* Main Content */}
+ <h1 className="text-4xl font-bold text-primary mb-6">Welcome to Setli</h1>
       <p className="text-lg text-slateBlue mb-4 text-center">
         Enter your address to find the best local services around you.
       </p>
       <SearchInput onPlaceSelected={handlePlaceSelected} />
+      {selectedPlace && (
+        <button
+          onClick={handleContinue}
+          className="mt-4 bg-highlight text-white py-2 px-6 rounded hover:bg-primary transition duration-300"
+        >
+          Continue
+        </button>
+      )}
     </div>
   );
 };
