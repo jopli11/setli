@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import Card from '../components/layout/Card';
 
 interface Service {
   name: string;
@@ -14,6 +15,7 @@ interface Service {
   user_ratings_total?: number;
   business_status?: string;
   types?: string[];
+  icon: string;
 }
 
 const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
@@ -104,119 +106,120 @@ const ResultsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-lightGrey p-8">
-      <div className="max-w-3xl mx-auto bg-white p-6 shadow-md rounded-lg">
+      <div className="max-w-5xl mx-auto bg-white p-6 shadow-md rounded-lg">
         <h1 className="text-3xl font-bold text-primary mb-4">
           Results for: <span className="text-highlight">{place.formatted_address}</span>
         </h1>
 
         {/* Filters Section */}
-        <div className="mb-6">
-          <label className="block mb-2 text-slateBlue font-medium">Filter by distance (km): {distanceFilter} km</label>
-          <input
-            type="range"
-            min="1"
-            max="20"
-            value={distanceFilter}
-            onChange={(e) => setDistanceFilter(Number(e.target.value))}
-            className="w-full"
-          />
-          
-          <label className="block mt-4 mb-2 text-slateBlue font-medium">Filter by rating:</label>
-          <select
-            value={ratingFilter !== null ? String(ratingFilter) : ''}
-            onChange={(e) => setRatingFilter(e.target.value ? Number(e.target.value) : null)}
-            className="p-2 border rounded bg-offWhite"
-          >
-            <option value="">All</option>
-            <option value="4.5">4.5+ stars</option>
-            <option value="4.0">4.0+ stars</option>
-            <option value="3.5">3.5+ stars</option>
-            <option value="3.0">3.0+ stars</option>
-          </select>
+        <div className="flex flex-wrap items-center mb-6 gap-4">
+          <label className="flex items-center text-slateBlue font-medium">
+            Distance (km):
+            <input
+              type="range"
+              min="1"
+              max="20"
+              value={distanceFilter}
+              onChange={(e) => setDistanceFilter(Number(e.target.value))}
+              className="ml-2"
+            />
+            <span className="ml-2">{distanceFilter} km</span>
+          </label>
 
-          <label className="block mt-4 mb-2 text-slateBlue font-medium">Filter by open status:</label>
-          <select
-            value={openStatusFilter !== null ? String(openStatusFilter) : ''}
-            onChange={(e) => {
-              const selectedValue = e.target.value;
-              setOpenStatusFilter(selectedValue === 'true' ? true : selectedValue === 'false' ? false : null);
-            }}
-            className="p-2 border rounded bg-offWhite"
-          >
-            <option value="">All</option>
-            <option value="true">Open</option>
-            <option value="false">Closed</option>
-          </select>
+          <label className="flex items-center text-slateBlue font-medium">
+            Rating:
+            <select
+              value={ratingFilter !== null ? String(ratingFilter) : ''}
+              onChange={(e) => setRatingFilter(e.target.value ? Number(e.target.value) : null)}
+              className="p-2 border rounded bg-offWhite ml-2"
+            >
+              <option value="">All</option>
+              <option value="4.5">4.5+ stars</option>
+              <option value="4.0">4.0+ stars</option>
+              <option value="3.5">3.5+ stars</option>
+              <option value="3.0">3.0+ stars</option>
+            </select>
+          </label>
 
-          <label className="block mt-4 mb-2 text-slateBlue font-medium">Filter by type:</label>
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="p-2 border rounded bg-offWhite"
-          >
-            <option value="All">All</option>
-            <option value="restaurant">Restaurant</option>
-            <option value="hotel">Hotel</option>
-            <option value="school">School</option>
-            <option value="store">Store</option>
-            <option value="gym">Gym</option>
-            {/* Add more types as needed */}
-          </select>
+          <label className="flex items-center text-slateBlue font-medium">
+            Open Status:
+            <select
+              value={openStatusFilter !== null ? String(openStatusFilter) : ''}
+              onChange={(e) => {
+                const selectedValue = e.target.value;
+                setOpenStatusFilter(selectedValue === 'true' ? true : selectedValue === 'false' ? false : null);
+              }}
+              className="p-2 border rounded bg-offWhite ml-2"
+            >
+              <option value="">All</option>
+              <option value="true">Open</option>
+              <option value="false">Closed</option>
+            </select>
+          </label>
+
+          <label className="flex items-center text-slateBlue font-medium">
+            Type:
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="p-2 border rounded bg-offWhite ml-2"
+            >
+              <option value="All">All</option>
+              <option value="restaurant">Restaurant</option>
+              <option value="hotel">Hotel</option>
+              <option value="school">School</option>
+              <option value="store">Store</option>
+              <option value="gym">Gym</option>
+              {/* Add more types as needed */}
+            </select>
+          </label>
         </div>
 
         {/* Displaying Top Rated Services */}
         <h2 className="text-2xl font-semibold text-teal mb-4">Top Rated Services by Industry</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {uniqueTopRatedServices.length > 0 ? (
-            uniqueTopRatedServices.map((service, index) => (
-              <div key={index} className="p-4 bg-white border rounded-lg shadow hover:shadow-md transition">
-                <h2 className="text-xl font-semibold">{service.name}</h2>
-                <p className="mt-2">Address: {service.vicinity}</p>
-                {service.rating && (
-                  <p className="mt-1">Rating: {service.rating} ⭐ ({service.user_ratings_total} reviews)</p>
-                )}
-                <p className="mt-1">
-                  Distance: {calculateDistance(
-                    place.geometry.location.lat,
-                    place.geometry.location.lng,
-                    service.geometry.location.lat,
-                    service.geometry.location.lng
-                  ).toFixed(2)} km
-                </p>
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-lg text-slateBlue">No top rated services found.</p>
-          )}
+          {uniqueTopRatedServices.map((service, index) => (
+            <Card
+              key={index}
+              name={service.name}
+              vicinity={service.vicinity}
+              rating={service.rating}
+              userRatingsTotal={service.user_ratings_total}
+              distance={calculateDistance(
+                place.geometry.location.lat,
+                place.geometry.location.lng,
+                service.geometry.location.lat,
+                service.geometry.location.lng
+              ).toFixed(2)}
+              icon={service.icon}
+              location={service.geometry.location}
+            />
+          ))}
         </div>
 
-        {/* Displaying All Services */}
-        <h2 className="text-2xl font-semibold text-teal mb-4">All Services</h2>
+        {/* Displaying Other Services */}
+        <h2 className="text-2xl font-semibold text-teal mb-4">Other Services</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {loading ? (
             <p className="text-center text-lg text-slateBlue">Loading services...</p>
           ) : (
-            filteredServices.length > 0 ? (
-              filteredServices.map((service, index) => (
-                <div key={index} className="p-4 bg-white border rounded-lg shadow hover:shadow-md transition">
-                  <h2 className="text-xl font-semibold">{service.name}</h2>
-                  <p className="mt-2">Address: {service.vicinity}</p>
-                  {service.rating && (
-                    <p className="mt-1">Rating: {service.rating} ⭐ ({service.user_ratings_total} reviews)</p>
-                  )}
-                  <p className="mt-1">
-                    Distance: {calculateDistance(
-                      place.geometry.location.lat,
-                      place.geometry.location.lng,
-                      service.geometry.location.lat,
-                      service.geometry.location.lng
-                    ).toFixed(2)} km
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p className="text-center text-lg text-slateBlue">No nearby services found.</p>
-            )
+            filteredServices.map((service, index) => (
+              <Card
+                key={index}
+                name={service.name}
+                vicinity={service.vicinity}
+                rating={service.rating}
+                userRatingsTotal={service.user_ratings_total}
+                distance={calculateDistance(
+                  place.geometry.location.lat,
+                  place.geometry.location.lng,
+                  service.geometry.location.lat,
+                  service.geometry.location.lng
+                ).toFixed(2)}
+                icon={service.icon}
+                location={service.geometry.location}
+              />
+            ))
           )}
         </div>
       </div>
