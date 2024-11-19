@@ -1,5 +1,5 @@
 // server/server.js
-require('dotenv').config();
+require('dotenv').config({ path: __dirname + '/.env' });
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
@@ -13,24 +13,25 @@ app.use(express.json());
 
 // Route to handle nearby search requests
 app.get('/api/nearby', async (req, res) => {
-    try {
-      // Your existing logic to call the Google API
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${req.query.lat},${req.query.lng}&radius=${req.query.radius}&type=${req.query.type}&key=${process.env.GOOGLE_API_KEY}`
-      );
-  
-      if (!response.ok) {
-        return res.status(response.status).json({ error: 'Failed to fetch data from the Google API' });
-      }
-  
-      const data = await response.json();
-      res.json(data);
-    } catch (error) {
-      console.error('Error in /api/nearby:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
-  
+  console.log('Received request to /api/nearby with params:', req.query);
+  try {
+    const response = await axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json`, {
+      params: {
+        location: `${req.query.lat},${req.query.lng}`,
+        radius: req.query.radius || 1500,
+        type: req.query.type,
+        key: process.env.GOOGLE_API_KEY,
+      },
+    });
+
+    console.log('Response from Google API:', response.data);
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error in /api/nearby:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 // Start the server
 app.listen(PORT, () => {

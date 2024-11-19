@@ -2,15 +2,16 @@ import React from 'react';
 import Autocomplete from 'react-google-autocomplete';
 
 interface SearchInputProps {
-  onPlaceSelected: (place: any) => void; // Updated type to `any` for broader compatibility
+  onPlaceSelected: (place: any) => void;
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({ onPlaceSelected }) => {
   return (
     <div className="relative w-full max-w-md">
       <Autocomplete
-        apiKey={import.meta.env.VITE_GOOGLE_API_KEY} // Updated to use `import.meta.env`
-        onPlaceSelected={(place: any) => { // Adjusted to `any`
+        apiKey={import.meta.env.VITE_GOOGLE_API_KEY}
+        onPlaceSelected={(place: any) => {
+          console.log('Selected place from Autocomplete:', place);
           onPlaceSelected(place);
         }}
         options={{ types: ['address'], fields: ['formatted_address', 'geometry'] }}

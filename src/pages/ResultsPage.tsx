@@ -15,15 +15,17 @@ const ResultsPage: React.FC = () => {
   useEffect(() => {
     const fetchNearbyServices = async (lat: number, lng: number) => {
       try {
+        console.log('Fetching nearby services for lat:', lat, 'lng:', lng);
         const response = await fetch(`/api/nearby?lat=${lat}&lng=${lng}&type=establishment`);
         
-        // Log the response for debugging
         console.log('Raw response:', response);
-  
-        if (response.headers.get('content-type')?.includes('application/json')) {
+
+        if (response.ok && response.headers.get('content-type')?.includes('application/json')) {
           const data = await response.json();
+          console.log('Parsed JSON data:', data);
           setServices(data.results || []);
         } else {
+          console.error('Response is not JSON or not OK:', response);
           throw new Error('Response is not JSON');
         }
       } catch (error) {
@@ -36,10 +38,12 @@ const ResultsPage: React.FC = () => {
     if (place?.geometry?.location) {
       const lat = place.geometry.location.lat;
       const lng = place.geometry.location.lng;
+      console.log('Place geometry found. Latitude:', lat, 'Longitude:', lng);
       fetchNearbyServices(lat, lng);
+    } else {
+      console.error('No valid place geometry found.');
     }
   }, [place]);
-  
 
   if (!place) {
     return (
