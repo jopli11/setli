@@ -1,3 +1,4 @@
+//src/components/layout/Card.tsx
 import React from 'react';
 
 interface CardProps {
