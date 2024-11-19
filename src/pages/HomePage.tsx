@@ -1,7 +1,7 @@
 // src/pages/HomePage.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SearchInput from '../components/SearchInput';
+import SearchInput from '../components/service/SearchInput';
 
 const HomePage: React.FC = () => {
   const [selectedPlace, setSelectedPlace] = useState<any>(null);

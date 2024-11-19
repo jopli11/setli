@@ -1,5 +1,6 @@
-//src/components/layout/Card.tsx
+// src/components/layout/Card.tsx
 import React from 'react';
+import { getCategoryStyle } from '../../utils/categoryUtils';
 
 interface CardProps {
   name: string;
@@ -7,16 +8,20 @@ interface CardProps {
   rating?: number;
   userRatingsTotal?: number;
   distance: string;
-  icon: string;
+  types?: string[];
   location: { lat: number; lng: number };
 }
 
-const Card: React.FC<CardProps> = ({ name, vicinity, rating, userRatingsTotal, distance, icon, location }) => {
+const Card: React.FC<CardProps> = ({ name, vicinity, rating, userRatingsTotal, distance, types, location }) => {
+  // Determine the primary type for styling
+  const primaryType = types && types.length > 0 ? types[0] : 'default';
+  const { icon, color } = getCategoryStyle(primaryType);
+
   return (
-    <div className="p-4 bg-white border rounded-lg shadow hover:shadow-md transition">
+    <div className="p-4 border rounded-lg shadow hover:shadow-md transition" style={{ borderColor: color }}>
       <div className="flex items-center mb-2">
-        <img src={icon} alt={`${name} icon`} className="w-6 h-6 mr-2" />
-        <h2 className="text-xl font-semibold">{name}</h2>
+        <span style={{ fontSize: '1.5rem', color }} className="mr-2">{icon}</span>
+        <h2 className="text-xl font-semibold" style={{ color }}>{name}</h2>
       </div>
       <p className="mt-1">Address: {vicinity}</p>
       {rating && (
@@ -25,6 +30,11 @@ const Card: React.FC<CardProps> = ({ name, vicinity, rating, userRatingsTotal, d
         </p>
       )}
       <p className="mt-1">Distance: {distance} km</p>
+      {types && (
+        <p className="mt-1 text-sm text-gray-600">
+          Subcategories: {types.join(', ')}
+        </p>
+      )}
       <a
         href={`https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`}
         target="_blank"

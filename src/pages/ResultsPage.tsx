@@ -141,7 +141,7 @@ const ResultsPage: React.FC = () => {
                 service.geometry.location.lat,
                 service.geometry.location.lng
               ).toFixed(2)}
-              icon={service.icon}
+              types={service.types}
               location={service.geometry.location}
             />
           ))}
@@ -166,7 +166,7 @@ const ResultsPage: React.FC = () => {
                   service.geometry.location.lat,
                   service.geometry.location.lng
                 ).toFixed(2)}
-                icon={service.icon}
+                types={service.types}
                 location={service.geometry.location}
               />
             ))
