@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Card from '../components/layout/Card';
 import FilterControls from '../components/common/FilterControls';
+import { calculateDistance } from '../components/service/Distance';
 
 interface Service {
   name: string;
@@ -20,17 +21,7 @@ interface Service {
   icon: string;
 }
 
-const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
-  const toRad = (value: number) => (value * Math.PI) / 180;
-  const R = 6371; // Earth's radius in km
-  const dLat = toRad(lat2 - lat1);
-  const dLng = toRad(lng2 - lng1);
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-    Math.sin(dLng / 2) * Math.sin(dLng / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // Distance in km
-};
+const RESULTS_PER_PAGE = 10;
 
 const ResultsPage: React.FC = () => {
   const location = useLocation();
@@ -41,6 +32,7 @@ const ResultsPage: React.FC = () => {
   const [ratingFilter, setRatingFilter] = useState<number | null>(null);
   const [openStatusFilter, setOpenStatusFilter] = useState<boolean | null>(null);
   const [typeFilter, setTypeFilter] = useState<string>('All');
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
     const fetchNearbyServices = async (lat: number, lng: number) => {
@@ -88,6 +80,13 @@ const ResultsPage: React.FC = () => {
 
     return withinDistance && withinRating && isOpen && matchesType;
   });
+
+  const paginatedServices = filteredServices.slice(
+    (currentPage - 1) * RESULTS_PER_PAGE,
+    currentPage * RESULTS_PER_PAGE
+  );
+
+  const totalPages = Math.ceil(filteredServices.length / RESULTS_PER_PAGE);
 
   const uniqueTopRatedServices = Array.from(
     new Map(
@@ -153,7 +152,7 @@ const ResultsPage: React.FC = () => {
           {loading ? (
             <p className="text-center text-lg text-slateBlue">Loading services...</p>
           ) : (
-            filteredServices.map((service, index) => (
+            paginatedServices.map((service, index) => (
               <Card
                 key={index}
                 name={service.name}
@@ -171,6 +170,19 @@ const ResultsPage: React.FC = () => {
               />
             ))
           )}
+        </div>
+
+        {/* Pagination Controls */}
+        <div className="flex justify-center mt-6">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentPage(index + 1)}
+              className={`px-4 py-2 mx-1 border rounded ${index + 1 === currentPage ? 'bg-teal text-white' : 'bg-white text-teal'}`}
+            >
+              {index + 1}
+            </button>
+          ))}
         </div>
       </div>
     </div>

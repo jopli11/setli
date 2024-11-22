@@ -1,14 +1,7 @@
 // src/components/service/Distance.tsx
 import React from 'react';
 
-interface DistanceProps {
-  userLat: number;
-  userLng: number;
-  serviceLat: number;
-  serviceLng: number;
-}
-
-const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+export const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
   const toRad = (value: number) => (value * Math.PI) / 180;
   const R = 6371; // Earth's radius in km
   const dLat = toRad(lat2 - lat1);
@@ -19,6 +12,13 @@ const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: numbe
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c; // Distance in km
 };
+
+interface DistanceProps {
+  userLat: number;
+  userLng: number;
+  serviceLat: number;
+  serviceLng: number;
+}
 
 const Distance: React.FC<DistanceProps> = ({ userLat, userLng, serviceLat, serviceLng }) => {
   const distance = calculateDistance(userLat, userLng, serviceLat, serviceLng);
