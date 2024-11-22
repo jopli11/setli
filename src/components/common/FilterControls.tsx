@@ -24,12 +24,13 @@ const FilterControls: React.FC<FilterControlsProps> = ({
 }) => {
   return (
     <div className="flex flex-wrap items-center mb-6 gap-4">
+      {/* Distance Filter */}
       <label className="flex items-center text-slateBlue font-medium">
         Distance (km):
         <input
           type="range"
           min="1"
-          max="20"
+          max="10" // Max distance updated to 10 km
           value={distanceFilter}
           onChange={(e) => setDistanceFilter(Number(e.target.value))}
           className="ml-2"
@@ -37,6 +38,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
         <span className="ml-2">{distanceFilter} km</span>
       </label>
 
+      {/* Rating Filter */}
       <label className="flex items-center text-slateBlue font-medium">
         Rating:
         <select
@@ -52,6 +54,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
         </select>
       </label>
 
+      {/* Open Status Filter */}
       <label className="flex items-center text-slateBlue font-medium">
         Open Status:
         <select
@@ -68,6 +71,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
         </select>
       </label>
 
+      {/* Type Filter */}
       <label className="flex items-center text-slateBlue font-medium">
         Type:
         <select
@@ -81,6 +85,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
           <option value="school">School</option>
           <option value="store">Store</option>
           <option value="gym">Gym</option>
+          <option value="health">Gym</option>
           {/* Add more types as needed */}
         </select>
       </label>

@@ -15,10 +15,11 @@ app.use(express.json());
 app.get('/api/nearby', async (req, res) => {
   console.log('Received request to /api/nearby with params:', req.query);
   try {
+    const radius = req.query.radius || 10000; // Default radius is 10 km
     const response = await axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json`, {
       params: {
         location: `${req.query.lat},${req.query.lng}`,
-        radius: req.query.radius || 1500,
+        radius,
         type: req.query.type,
         key: process.env.GOOGLE_API_KEY,
       },
@@ -31,7 +32,6 @@ app.get('/api/nearby', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 
 // Start the server
 app.listen(PORT, () => {

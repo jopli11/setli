@@ -1,3 +1,4 @@
+// src/components/service/Distance.tsx
 import React from 'react';
 
 interface DistanceProps {
